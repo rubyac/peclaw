@@ -1,0 +1,25 @@
+# Managed-cloud builds: extend platform CA trust without baking session certificates into images.
+# Run with: docker compose -f docker-compose.yml -f docker-compose.cloud.yml build
+services:
+  api:
+    secrets: [proxy_ca]
+    environment:
+      SSL_CERT_FILE: /run/secrets/proxy_ca
+    build:
+      secrets: [proxy_ca]
+  agent-worker:
+    secrets: [proxy_ca]
+    environment:
+      SSL_CERT_FILE: /run/secrets/proxy_ca
+  migrate:
+    build:
+      secrets: [proxy_ca]
+  storage-init:
+    build:
+      secrets: [proxy_ca]
+  web:
+    build:
+      secrets: [proxy_ca]
+secrets:
+  proxy_ca:
+    file: /etc/ssl/certs/ca-certificates.crt

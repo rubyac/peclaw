@@ -1,0 +1,114 @@
+.knowledge-scope,
+.knowledge-version {
+  display: flex;
+  gap: 20px;
+  align-items: end;
+  flex-wrap: wrap;
+  margin: 22px 0;
+}
+.knowledge-scope label,
+.knowledge-version label {
+  display: grid;
+  gap: 8px;
+  min-width: 180px;
+}
+.knowledge-scope select,
+.knowledge-version select {
+  max-width: 100%;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+}
+.private-doc-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid var(--line);
+  padding: 20px 0;
+  overflow-wrap: anywhere;
+}
+.private-doc-row p {
+  font-size: 12px;
+  margin: 8px 0;
+}
+.private-doc-row small,
+.citation-card small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.private-doc-row .catalog-actions {
+  flex-shrink: 0;
+  align-content: center;
+}
+.citation-card {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  margin: 16px 0;
+  padding: 20px;
+  overflow-wrap: anywhere;
+}
+.citation-card blockquote {
+  white-space: pre-wrap;
+  margin: 18px 0;
+  font-size: 13px;
+  line-height: 1.9;
+}
+.document-grants {
+  display: grid;
+  gap: 14px;
+}
+.document-grants label {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+.document-grants select {
+  padding: 8px;
+  min-width: 100px;
+}
+.knowledge-search {
+  margin: 20px 0;
+}
+.search-citation a {
+  font-size: 12px;
+}
+.form-section-title {
+  margin: 28px 0 16px;
+}
+.knowledge-version a {
+  display: inline-block;
+}
+.back-link {
+  font-size: 12px;
+}
+.pagination {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+@media (max-width: 700px) {
+  .private-doc-row {
+    flex-direction: column;
+  }
+  .knowledge-scope label,
+  .knowledge-version label {
+    min-width: 0;
+    width: 100%;
+  }
+  .document-grants label {
+    align-items: start;
+  }
+  .citation-card {
+    padding: 14px;
+  }
+  .citation-card .section-heading {
+    flex-wrap: wrap;
+  }
+  .knowledge-scope select {
+    width: 100%;
+  }
+}

@@ -1,0 +1,148 @@
+name: peclaw
+x-api: &api
+  image: peclaw-api:local
+  build: ./services/api
+  environment: &api-env
+    NO_PROXY: localhost,127.0.0.1,postgres,redis,object-storage,api,web,${NO_PROXY:-}
+    no_proxy: localhost,127.0.0.1,postgres,redis,object-storage,api,web,${no_proxy:-}
+    APP_ENV: ${APP_ENV:-development}
+    OPENBLAS_NUM_THREADS: "1"
+    OMP_NUM_THREADS: "1"
+    MODEL_INPUT_PRICE_PER_MILLION: ${MODEL_INPUT_PRICE_PER_MILLION:-}
+    MODEL_OUTPUT_PRICE_PER_MILLION: ${MODEL_OUTPUT_PRICE_PER_MILLION:-}
+    REPORT_ALLOW_DRAFT_EXPORT: ${REPORT_ALLOW_DRAFT_EXPORT:-true}
+    MODEL_PROVIDER: ${MODEL_PROVIDER:-disabled}
+    MODEL_BASE_URL: ${MODEL_BASE_URL:-https://api.deepseek.com/v1}
+    MODEL_NAME: ${MODEL_NAME:-deepseek-chat}
+    MODEL_API_KEY: ${MODEL_API_KEY:-}
+    MODEL_TIMEOUT_SECONDS: ${MODEL_TIMEOUT_SECONDS:-40}
+    MODEL_MAX_OUTPUT_TOKENS: ${MODEL_MAX_OUTPUT_TOKENS:-4000}
+    MODEL_ORG_DAILY_TOKEN_LIMIT: ${MODEL_ORG_DAILY_TOKEN_LIMIT:-200000}
+    MODEL_ORG_CONCURRENCY: ${MODEL_ORG_CONCURRENCY:-1}
+    KNOWLEDGE_MAX_FILE_BYTES: ${KNOWLEDGE_MAX_FILE_BYTES:-10485760}
+    AUTH_COOKIE_SECURE: ${AUTH_COOKIE_SECURE:-false}
+    AUTH_LOGIN_ATTEMPTS: ${AUTH_LOGIN_ATTEMPTS:-10}
+    AUTH_PEER_LOGIN_ATTEMPTS: ${AUTH_PEER_LOGIN_ATTEMPTS:-500}
+    AUTH_SESSION_SECONDS: ${AUTH_SESSION_SECONDS:-28800}
+    AUTH_ALLOWED_ORIGINS: ${AUTH_ALLOWED_ORIGINS:-["http://localhost:3000","http://127.0.0.1:3000"]}
+    DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-peclaw}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@postgres:5432/${POSTGRES_DB:-peclaw}
+    REDIS_URL: redis://redis:6379/0
+    S3_ENDPOINT_URL: http://object-storage:9000
+    S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:?Set S3_ACCESS_KEY_ID in .env}
+    S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:?Set S3_SECRET_ACCESS_KEY in .env}
+    S3_BUCKET: ${S3_BUCKET:-peclaw-documents}
+    S3_REGION: ${S3_REGION:-us-east-1}
+  restart: unless-stopped
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-peclaw}
+      POSTGRES_USER: ${POSTGRES_USER:-peclaw}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports: ["127.0.0.1:6379:6379"]
+    volumes: ["redis_data:/data"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+  object-storage:
+    image: rustfs/rustfs:1.0.0-alpha.85@sha256:23ff2af1ec2d64e0fb9608a1c39b5eb96fcff3a8efecf332986c948b0e3e4f8a
+    environment:
+      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY_ID:?Set S3_ACCESS_KEY_ID in .env}
+      RUSTFS_SECRET_KEY: ${S3_SECRET_ACCESS_KEY:?Set S3_SECRET_ACCESS_KEY in .env}
+    ports: ["127.0.0.1:9000:9000", "127.0.0.1:9001:9001"]
+    volumes: ["object-storage_data:/data"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+  migrate:
+    <<: *api
+    command: ["alembic", "upgrade", "head"]
+    restart: "no"
+    depends_on:
+      postgres: {condition: service_healthy}
+  storage-init:
+    <<: *api
+    command: ["python", "-m", "app.storage_init"]
+    restart: "no"
+    depends_on:
+      object-storage: {condition: service_healthy}
+  api:
+    <<: *api
+    ports: ["127.0.0.1:8000:8000"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      storage-init: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health/ready', timeout=10)"]
+      interval: 10s
+      timeout: 12s
+      retries: 10
+      start_period: 15s
+  catalog-worker:
+    <<: *api
+    command: ["python", "-m", "app.catalog_worker"]
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+  evaluation-worker:
+    <<: *api
+    command: ["python", "-m", "app.evaluation_worker"]
+    mem_limit: 2g
+    cpus: 1
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      storage-init: {condition: service_completed_successfully}
+  agent-worker:
+    <<: *api
+    command: ["python", "-m", "app.agent_worker"]
+    mem_limit: 1g
+    cpus: 1
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      storage-init: {condition: service_completed_successfully}
+  knowledge-worker:
+    <<: *api
+    command: ["python", "-m", "app.knowledge_worker"]
+    mem_limit: 2g
+    cpus: 1
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      storage-init: {condition: service_completed_successfully}
+  web:
+    build: ./apps/web
+    environment:
+      API_INTERNAL_URL: http://api:8000
+      NO_PROXY: localhost,127.0.0.1,api,${NO_PROXY:-}
+      no_proxy: localhost,127.0.0.1,api,${no_proxy:-}
+    ports: ["127.0.0.1:3000:3000"]
+    depends_on:
+      api: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 12s
+      retries: 10
+    restart: unless-stopped
+volumes:
+  postgres_data:
+  redis_data:
+  object-storage_data:

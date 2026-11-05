@@ -1,0 +1,350 @@
+.catalog-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.catalog-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 22px;
+}
+.catalog-form .wide {
+  grid-column: 1/-1;
+}
+.catalog-form select[multiple] {
+  min-height: 95px;
+}
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 11px;
+  line-height: 1.8;
+}
+.checkbox-label input {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.discovery-query {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items: end;
+}
+.discovery-query button {
+  height: 40px;
+}
+.catalog-filters {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 15px;
+  padding-top: 20px;
+  margin-top: 24px;
+  border-top: 1px solid var(--line);
+  align-items: end;
+}
+.catalog-filters label {
+  font-size: 10px;
+}
+.catalog-filters .refresh {
+  min-height: 39px;
+}
+.company-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.company-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 22px;
+  transition: border-color 0.15s;
+  background: #fff;
+}
+.company-card:hover {
+  border-color: #98b188;
+}
+.company-card > div:first-child {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.company-card h3 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 23px 0 15px;
+  overflow-wrap: anywhere;
+}
+.company-card p {
+  font-size: 12px;
+  color: #82907b;
+  line-height: 1.8;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 43px;
+  overflow-wrap: anywhere;
+}
+.company-card small {
+  display: block;
+  margin-top: 20px;
+  color: #94a08c;
+  font-size: 10px;
+}
+.company-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 15px 0;
+}
+.company-tags > span,
+.company-tags > a {
+  display: block;
+  background: #edf2e6;
+  color: #6b835c;
+  padding: 7px 10px;
+  border-radius: 4px;
+  font-size: 10px;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+  margin-top: 25px;
+  font-size: 11px;
+  color: #809273;
+}
+.company-title {
+  margin-top: 22px;
+  overflow-wrap: anywhere;
+}
+.profile-description {
+  font-size: 13px;
+  line-height: 1.9;
+  color: #718369;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.facts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+  padding: 16px 0;
+  margin: 20px 0;
+  border-top: 1px solid var(--line);
+}
+.facts-grid dt {
+  font-size: 10px;
+  color: #91a085;
+  margin-bottom: 10px;
+}
+.facts-grid dd {
+  font-size: 13px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.conflict-panel {
+  background: #fff4e7;
+  border: 1px solid #e9cfab;
+  border-radius: 8px;
+  padding: 22px 25px;
+  margin-bottom: 24px;
+}
+.conflict-panel h2 {
+  font-size: 15px;
+  font-weight: 500;
+  color: #8d6e40;
+  margin: 0 0 14px;
+}
+.conflict-panel p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #9a7d52;
+}
+.evidence-card,
+.source-card {
+  padding: 20px 0;
+  border-top: 1px solid #e8ede2;
+  overflow-wrap: anywhere;
+}
+.evidence-card h3,
+.source-card h3 {
+  font-weight: 500;
+  font-size: 14px;
+  margin: 0 0 14px;
+}
+.evidence-card > p,
+.source-card > p {
+  font-size: 12px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+.evidence-card blockquote {
+  border-left: 3px solid #aebf98;
+  margin: 12px 0;
+  padding: 12px 16px;
+  background: #f2f6ed;
+  color: #6c7d60;
+  font-size: 12px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.evidence-card .section-heading {
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.review-form {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 20px;
+}
+.review-form > label {
+  flex: 1;
+  min-width: 160px;
+}
+.review-form > .primary,
+.review-form > .refresh {
+  min-height: 38px;
+}
+.form-section-title {
+  font-size: 15px;
+  color: #4c7046;
+  cursor: pointer;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+.change-json {
+  max-width: 100%;
+  overflow: auto;
+  font-size: 10px;
+  background: #f4f7f0;
+  padding: 16px;
+  border-radius: 5px;
+  line-height: 1.6;
+}
+.source-card summary {
+  font-size: 11px;
+  color: #718b64;
+  cursor: pointer;
+}
+.source-card small {
+  font-size: 10px;
+  color: #89997c;
+}
+.source-card strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.taxonomy-map {
+  margin: 25px 0;
+  display: grid;
+  gap: 10px;
+}
+.taxonomy-map article {
+  border-left: 2px solid #b2c19e;
+  padding: 8px 15px;
+  background: #f2f6ec;
+  border-radius: 0 5px 5px 0;
+  overflow-wrap: anywhere;
+}
+.taxonomy-map strong {
+  font-size: 12px;
+  font-weight: 500;
+}
+.taxonomy-map small {
+  display: block;
+  font-size: 9px;
+  color: #91a080;
+  margin-top: 5px;
+}
+.taxonomy-map p {
+  font-size: 11px;
+  color: #809170;
+  margin: 9px 0 0;
+}
+.import-counts {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.import-counts span {
+  font-size: 12px;
+  color: #6b865d;
+}
+.import-rows {
+  padding-left: 20px;
+  font-size: 11px;
+  color: #7b8f6d;
+  line-height: 2;
+}
+.import-rows a {
+  color: #3b7046;
+  margin-left: 10px;
+}
+.catalog-form details {
+  min-width: 0;
+}
+@media (max-width: 1100px) {
+  .catalog-filters {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .company-grid {
+    grid-template-columns: 1fr;
+  }
+  .facts-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .catalog-form {
+    grid-template-columns: 1fr;
+  }
+  .catalog-form .wide {
+    grid-column: auto;
+  }
+  .catalog-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .catalog-actions {
+    margin-top: 20px;
+  }
+  .discovery-query {
+    grid-template-columns: 1fr;
+  }
+  .discovery-query button {
+    width: 100%;
+    justify-self: stretch;
+  }
+  .company-card {
+    padding: 18px;
+  }
+  .company-title {
+    font-size: 25px !important;
+  }
+  .facts-grid {
+    gap: 20px 12px;
+  }
+  .evidence-card .section-heading > span {
+    font-size: 10px;
+  }
+  .review-form {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .review-form > label {
+    min-width: 0;
+  }
+  .source-card .section-heading {
+    flex-wrap: wrap;
+  }
+}

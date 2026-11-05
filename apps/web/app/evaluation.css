@@ -1,0 +1,68 @@
+.evaluation-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 25px 0;
+}
+.evaluation-metrics article {
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 20px;
+  display: grid;
+  gap: 12px;
+}
+.evaluation-metrics strong {
+  font-size: 23px;
+  overflow-wrap: anywhere;
+}
+.evaluation-metrics span {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
+}
+.evaluation-score-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  font-size: 12px;
+}
+.evaluation-score-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding: 10px 0;
+}
+.evaluation-score-list dd {
+  margin: 0;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+.evaluation-dataset,
+.evaluation-run,
+.evaluation-case-drafts {
+  overflow-wrap: anywhere;
+}
+.evaluation-case-result h3,
+.evaluation-run h3 {
+  font-size: 16px;
+}
+.evaluation-dataset p,
+.evaluation-run p {
+  font-size: 13px;
+  line-height: 1.8;
+}
+@media (max-width: 700px) {
+  .evaluation-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+  .evaluation-metrics article {
+    padding: 14px;
+  }
+  .evaluation-metrics strong {
+    font-size: 19px;
+  }
+  .evaluation-score-list {
+    grid-template-columns: 1fr;
+  }
+}

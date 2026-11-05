@@ -1,0 +1,39 @@
+# Run together with ../docker-compose.yml from the repository root.
+# Intended for a Docker host with inbound ports 80/443 and a domain pointing to it.
+x-public-auth: &public-auth
+  APP_ENV: production
+  AUTH_COOKIE_SECURE: "true"
+  AUTH_ALLOWED_ORIGINS: '["https://${PUBLIC_DOMAIN:?Set PUBLIC_DOMAIN to your DNS hostname}"]'
+services:
+  api:
+    environment: *public-auth
+  migrate:
+    environment: *public-auth
+  storage-init:
+    environment: *public-auth
+  catalog-worker:
+    environment: *public-auth
+  evaluation-worker:
+    environment: *public-auth
+  agent-worker:
+    environment: *public-auth
+  knowledge-worker:
+    environment: *public-auth
+  proxy:
+    image: caddy:2.10.2-alpine
+    environment:
+      PUBLIC_DOMAIN: ${PUBLIC_DOMAIN:?Set PUBLIC_DOMAIN to your DNS hostname}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      web:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  caddy_data:
+  caddy_config:

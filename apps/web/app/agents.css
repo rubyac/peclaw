@@ -1,0 +1,74 @@
+.agent-model-status p {
+  margin: 12px 0;
+}
+.agent-document-options {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px;
+  display: grid;
+  gap: 15px;
+}
+.agent-document-options legend {
+  padding: 0 8px;
+  font-size: 13px;
+}
+.agent-document-options label {
+  overflow-wrap: anywhere;
+}
+.agent-detail h3 {
+  font-size: 17px;
+  margin: 30px 0 16px;
+}
+.agent-detail p,
+.agent-detail li {
+  font-size: 13px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+}
+.agent-text {
+  white-space: pre-wrap;
+}
+.agent-claim {
+  margin: 16px 0;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.claim-label {
+  font-size: 11px;
+  display: inline-block;
+  background: #eef2e9;
+  padding: 5px 8px;
+  border-radius: 5px;
+}
+.claim-fact {
+  background: #dfecde;
+}
+.claim-unknown,
+.claim-unverified {
+  background: #f5f0da;
+}
+.claim-conflicting {
+  background: #f6e3dc;
+}
+.agent-reference-links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--green);
+}
+.agent-task-row small {
+  overflow-wrap: anywhere;
+}
+.agent-detail .citation-card strong {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .agent-document-options {
+    padding: 12px;
+  }
+  .agent-claim {
+    padding: 14px;
+  }
+}

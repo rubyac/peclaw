@@ -1,0 +1,83 @@
+name: validation
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm run build
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.13.4"
+          python-version: "3.12"
+      - run: uv sync --frozen --extra dev
+        working-directory: services/api
+      - name: Configure isolated development credentials
+        run: python scripts/init_env.py
+      - run: uv run ruff check app alembic ../../tests
+        working-directory: services/api
+      - run: uv run pytest ../../tests/unit ../../tests/security
+        working-directory: services/api
+      - run: docker compose up -d --wait postgres redis object-storage
+      - run: uv run alembic upgrade head && uv run python -m app.storage_init
+        working-directory: services/api
+      - run: uv run alembic check
+        working-directory: services/api
+      - run: uv run pytest ../../tests/integration
+        working-directory: services/api
+      - run: uv run python -m app.evaluation.demo --output ../../test-artifacts/eight-demos
+        working-directory: services/api
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: eight-demo-evidence
+          path: test-artifacts/eight-demos
+      - name: Clean up
+        if: always()
+        run: docker compose down -v
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: python3 scripts/init_env.py
+      - run: docker compose build api web
+      - run: docker compose up -d --wait
+      - run: npm ci
+        working-directory: apps/web
+      - run: npx playwright install --with-deps chromium
+        working-directory: apps/web
+      - run: npm run test:e2e
+        working-directory: apps/web
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-evidence
+          path: |
+            test-artifacts
+            apps/web/test-results
+      - name: Clean up
+        if: always()
+        run: docker compose down -v

@@ -1,0 +1,26 @@
+{
+  "notice": "仅为字段模板：必须替换为当前项目真实授权资源 ID 与人工标注，不是运行结果。",
+  "cases": [
+    {
+      "id": "company_example",
+      "kind": "company_search",
+      "filters": { "q": "请填写实际企业关键词" },
+      "k": 5,
+      "relevance": [{ "company_id": "00000000-0000-4000-8000-000000000001", "grade": 3 }]
+    },
+    {
+      "id": "retrieval_example",
+      "kind": "knowledge_retrieval",
+      "query": "请填写标注的检索问题",
+      "mode": "keyword",
+      "k": 5,
+      "relevance": [{ "document_id": "00000000-0000-4000-8000-000000000002", "grade": 3 }]
+    },
+    {
+      "id": "bp_pending",
+      "kind": "bp_screening",
+      "task_id": null,
+      "expected_claims": [{ "text": "请替换为人工标注的预期陈述；没有任务时只记为未评测。", "classification": "unknown" }]
+    }
+  ]
+}
